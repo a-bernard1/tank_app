@@ -1,15 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'screens/control_screen.dart';
 import 'bluetoothServices/bluetooth_services.dart';
 import 'widgets/tank_status_bar.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
-  await SystemChrome.setPreferredOrientations([
-    DeviceOrientation.landscapeRight,
-  ]);
 
   BluetoothManager().start();
 
