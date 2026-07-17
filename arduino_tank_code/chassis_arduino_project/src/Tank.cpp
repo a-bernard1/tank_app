@@ -1,6 +1,9 @@
 #include "Tank.hpp"
+#include "Battery.hpp"
 
 Tank::Tank(Motor& l, Motor& r)  : left(l), right(r) {}
+
+Battery battery(A0);
 
 void Tank::begin(){
     left.begin();
@@ -9,7 +12,8 @@ void Tank::begin(){
 
 void Tank::setSpeed(uint8_t s){
     speed = s;
-    move(current);
+    currentSpeed = speed;
+    move(current, speed);
 }
 
 void Tank::movStop(){
@@ -20,6 +24,7 @@ void Tank::movStop(){
 
 Direction Tank::command(uint8_t cmd){
     switch(cmd){
+        //case 0: return Direction::None;
         case 1: return Direction::Forward;
         case 2: return Direction::Backward;
         case 3: return Direction::RotateLeft;
@@ -28,10 +33,17 @@ Direction Tank::command(uint8_t cmd){
     }
 }
 
-void Tank::move(Direction dir){
-    if (dir==current) return;
+void Tank::move(Direction dir, uint8_t speed){
+    if (dir==current && speed==currentSpeed) return;
     
     switch (dir){
+        /*case Direction::None:
+            battery.getMeanVoltage();
+            left.stop();
+            right.stop();
+
+            break;*/
+        
         case Direction::Forward:
             left.forward(speed);
             right.forward(speed);
@@ -55,6 +67,7 @@ void Tank::move(Direction dir){
         default:
             left.stop();
             right.stop();
+            battery.getMeanVoltage();
     }
     current = dir;
 }
