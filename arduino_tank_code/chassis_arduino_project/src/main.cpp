@@ -10,11 +10,12 @@ BLEService ledService("19B10000-E8F2-537E-4F6C-D104768A1214"); // Bluetooth® Lo
 // Bluetooth® Low Energy LED Switch Characteristic - custom 128-bit UUID, read and writable by central
 BLEByteCharacteristic switchCharacteristic("19B10001-E8F2-537E-4F6C-D104768A1214", BLERead | BLEWrite);
 
-Motor leftMotor(9, 10, 4, 5);
-Motor rightMotor(6, 3, 7, 8);
+Motor leftMotor(10, 9, 4, 5);
+Motor rightMotor(3, 11, 7, 8);
 Tank tank = Tank(leftMotor, rightMotor);
 
 void setup() {
+	Serial.begin(9600);
 	tank.begin();
 
     if (!BLE.begin()) {
@@ -38,7 +39,6 @@ void setup() {
 
 	// start advertising
 	BLE.advertise();
-
 }
 
 void loop() {
@@ -49,7 +49,7 @@ void loop() {
 			if(switchCharacteristic.written()){
 				uint8_t cmd_received = switchCharacteristic.value();
 				Direction dir = tank.command(cmd_received); 
-				tank.move(dir);
+				tank.move(dir, 150);
 			}
 		}
 	}
