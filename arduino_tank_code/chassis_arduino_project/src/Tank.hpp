@@ -23,6 +23,7 @@ class Tank{
         Motor& right;
         Direction current = Direction::None;
         uint8_t speed = 150;
+        uint8_t currentSpeed = speed;
 
     public: 
         Tank(Motor& l, Motor& r);
@@ -33,7 +34,7 @@ class Tank{
 
         Direction command(uint8_t cmd);
 
-        void move(Direction dir);
+        void move(Direction dir, uint8_t speed);
 
         void movStop();
 };
