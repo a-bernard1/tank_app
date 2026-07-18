@@ -10,7 +10,7 @@ void Motor::begin(){
     pinMode(enable1, OUTPUT);
     pinMode(enable2, OUTPUT);
 
-    digitalWrite(enable1, HIGH); 
+    digitalWrite(enable1, HIGH);
     digitalWrite(enable2, HIGH);
 }
 
@@ -34,18 +34,20 @@ void Motor::stop(){
     currentSpeed = 0;
 }
 
+
 void Motor::progressiveBrake(){
     if(state == 1){
         for(int s = currentSpeed; s>=0 ; s-=5){
             analogWrite(pwmForward, s);
             analogWrite(pwmBackward, 0);
-            delay(10);
+            delay(100);
         }
     }else if(state == 2){
-        for (int s = currentSpeed; s >= 0 ; s-=5){
+        for (int s = currentSpeed; s>=0 ; s-=5){
             analogWrite(pwmForward, 0);
             analogWrite(pwmBackward, s);
-        }
+            delay(100);
+	    }
     }
     analogWrite(pwmForward, 0);
     analogWrite(pwmBackward, 0);
