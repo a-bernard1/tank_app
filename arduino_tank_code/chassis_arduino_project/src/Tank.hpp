@@ -37,6 +37,8 @@ class Tank{
         void move(Direction dir, uint8_t speed);
 
         void movStop();
+
+        void updateBrake();
 };
 
 #endif

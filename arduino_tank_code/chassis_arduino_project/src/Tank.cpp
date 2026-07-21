@@ -37,16 +37,11 @@ void Tank::move(Direction dir, uint8_t speed){
     if (dir==current && speed==currentSpeed) return;
     
     switch (dir){
-        /*case Direction::None:
-            battery.getMeanVoltage();
-            left.stop();
-            right.stop();
-
-            break;*/
         
         case Direction::Forward:
             left.forward(speed);
             right.forward(speed);
+            Serial.println("TEST: forward");
             break;
         
         case Direction::Backward:
@@ -68,6 +63,15 @@ void Tank::move(Direction dir, uint8_t speed){
             left.stop();
             right.stop();
             battery.getMeanVoltage();
+            Serial.println("TEST: stop");
     }
     current = dir;
+    currentSpeed = speed;
+}
+
+
+void Tank::updateBrake(){
+    Serial.println("TEST: Tank brake function");
+    left.updateBrake();
+    right.updateBrake();
 }
