@@ -46,6 +46,7 @@ void loop() {
 
 	if(central){
 		while(central.connected()){
+			tank.updateBrake();
 			if(switchCharacteristic.written()){
 				uint8_t cmd_received = switchCharacteristic.value();
 				Direction dir = tank.command(cmd_received); 
