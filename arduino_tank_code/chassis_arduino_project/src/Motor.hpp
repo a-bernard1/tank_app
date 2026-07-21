@@ -12,7 +12,10 @@ class Motor{
         uint8_t enable2;
         uint8_t state;
         uint8_t currentSpeed;
-        
+        unsigned long lastBrakeTime = 0;
+        uint8_t targetSpeed = 0;
+        bool isBraking = false;
+
     public:
         Motor(uint8_t fwd, uint8_t back, uint8_t en1, uint8_t en2);
 
@@ -24,8 +27,7 @@ class Motor{
 
         void stop();
 
-    private:
-        void progressiveBrake();
+        void updateBrake();
 };
 
 

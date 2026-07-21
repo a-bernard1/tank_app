@@ -15,6 +15,7 @@ void Motor::begin(){
 }
 
 void Motor::forward(uint8_t speed){
+    isBraking = false;
     analogWrite(pwmForward, speed);
     analogWrite(pwmBackward, 0);
     state = 1;
@@ -22,6 +23,7 @@ void Motor::forward(uint8_t speed){
 }
 
 void Motor::backward(uint8_t speed){
+    isBraking = false;
     analogWrite(pwmForward, 0);
     analogWrite(pwmBackward, speed);
     state = 2;
@@ -29,27 +31,48 @@ void Motor::backward(uint8_t speed){
 }
 
 void Motor::stop(){
-    progressiveBrake();
-    state = 0;
-    currentSpeed = 0;
+    if(isBraking = true)return;
+    
+    if (currentSpeed > 0) {
+        isBraking = true;
+        targetSpeed = 0;
+        lastBrakeTime = millis();
+    } else {
+        analogWrite(pwmForward, 0);
+        analogWrite(pwmBackward, 0);
+        state = 0;
+        isBraking = false;
+    }
 }
 
+void Motor::updateBrake(){
+    if(!isBraking) return;
 
-void Motor::progressiveBrake(){
-    if(state == 1){
-        for(int s = currentSpeed; s>=0 ; s-=5){
-            analogWrite(pwmForward, s);
-            analogWrite(pwmBackward, 0);
-            delay(100);
+    if(millis()-lastBrakeTime >=10){
+        lastBrakeTime = millis();
+
+        if(currentSpeed > targetSpeed){
+            if(currentSpeed >=5){
+                currentSpeed -= 5;
+            }else{
+                currentSpeed = 0;
+            }
+            
+            if(state == 1){
+                analogWrite(pwmForward, currentSpeed);
+                analogWrite(pwmBackward, 0);
+            }else if(state == 2){
+                analogWrite(pwmForward, 0);
+                analogWrite(pwmBackward, currentSpeed);
+            }
         }
-    }else if(state == 2){
-        for (int s = currentSpeed; s>=0 ; s-=5){
+
+        if(currentSpeed == 0){
             analogWrite(pwmForward, 0);
-            analogWrite(pwmBackward, s);
-            delay(100);
-	    }
+            analogWrite(pwmBackward, 0);
+            state = 0;
+            isBraking = false;
+        }
     }
-    analogWrite(pwmForward, 0);
-    analogWrite(pwmBackward, 0);
 }
 
