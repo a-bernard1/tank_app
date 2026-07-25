@@ -15,23 +15,41 @@ void Motor::begin(){
 }
 
 void Motor::forward(uint8_t speed){
+    if(state==2 && currentSpeed>0){
+        targetSpeed = speed;
+        targetState = 1;
+        isBraking = true;
+        return;
+    }
+
     isBraking = false;
-    analogWrite(pwmForward, speed);
-    analogWrite(pwmBackward, 0);
+    targetState = 1;
+    targetSpeed = speed;
     state = 1;
     currentSpeed = speed;
+    analogWrite(pwmForward, speed);
+    analogWrite(pwmBackward, 0);
 }
 
 void Motor::backward(uint8_t speed){
+    if(state==1 && currentSpeed>0){
+        targetSpeed = speed;
+        targetState = 2;
+        isBraking = true;
+        return;
+    }
+
     isBraking = false;
-    analogWrite(pwmForward, 0);
-    analogWrite(pwmBackward, speed);
+    targetState = 2;
+    targetSpeed = speed;
     state = 2;
     currentSpeed = speed;
+    analogWrite(pwmForward, 0);
+    analogWrite(pwmBackward, speed);
 }
 
 void Motor::stop(){
-    if(isBraking = true)return;
+    if(isBraking)return;
     
     if (currentSpeed > 0) {
         isBraking = true;
@@ -51,27 +69,33 @@ void Motor::updateBrake(){
     if(millis()-lastBrakeTime >=10){
         lastBrakeTime = millis();
 
-        if(currentSpeed > targetSpeed){
-            if(currentSpeed >=5){
-                currentSpeed -= 5;
-            }else{
-                currentSpeed = 0;
-            }
-            
-            if(state == 1){
-                analogWrite(pwmForward, currentSpeed);
-                analogWrite(pwmBackward, 0);
-            }else if(state == 2){
-                analogWrite(pwmForward, 0);
-                analogWrite(pwmBackward, currentSpeed);
-            }
+        if(currentSpeed >=5){
+            currentSpeed -= 5;
+        }else{
+            currentSpeed = 0;
         }
+        
+        if(state == 1){
+            analogWrite(pwmForward, currentSpeed);
+            analogWrite(pwmBackward, 0);
+        }else if(state == 2){
+            analogWrite(pwmForward, 0);
+            analogWrite(pwmBackward, currentSpeed);
+        }
+        
 
         if(currentSpeed == 0){
             analogWrite(pwmForward, 0);
             analogWrite(pwmBackward, 0);
-            state = 0;
-            isBraking = false;
+
+            if(targetState == 1){
+                forward(targetSpeed);
+            } else if(targetState == 2){
+                backward(targetSpeed);
+            }else{
+                state = 0;
+                isBraking = false;
+            }
         }
     }
 }

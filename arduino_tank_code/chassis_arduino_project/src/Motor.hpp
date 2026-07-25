@@ -14,6 +14,7 @@ class Motor{
         uint8_t currentSpeed;
         unsigned long lastBrakeTime = 0;
         uint8_t targetSpeed = 0;
+        uint8_t targetState = 0;
         bool isBraking = false;
 
     public:
