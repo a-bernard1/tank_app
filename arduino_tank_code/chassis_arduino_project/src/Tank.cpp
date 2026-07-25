@@ -12,7 +12,6 @@ void Tank::begin(){
 
 void Tank::setSpeed(uint8_t s){
     speed = s;
-    currentSpeed = speed;
     move(current, speed);
 }
 
@@ -24,11 +23,12 @@ void Tank::movStop(){
 
 Direction Tank::command(uint8_t cmd){
     switch(cmd){
-        //case 0: return Direction::None;
         case 1: return Direction::Forward;
         case 2: return Direction::Backward;
-        case 3: return Direction::RotateLeft;
-        case 4: return Direction::RotateRight;
+        case 3: return Direction::TurnLeft;
+        case 4: return Direction::TurnRight;
+        case 5: return Direction::RotateLeft;
+        case 6: return Direction::RotateRight;
         default: return Direction::None;
     }
 }
@@ -41,7 +41,6 @@ void Tank::move(Direction dir, uint8_t speed){
         case Direction::Forward:
             left.forward(speed);
             right.forward(speed);
-            Serial.println("TEST: forward");
             break;
         
         case Direction::Backward:
@@ -49,29 +48,44 @@ void Tank::move(Direction dir, uint8_t speed){
             right.backward(speed);
             break;
         
-        case Direction::RotateLeft:
-            left.backward(speed);
+        case Direction::TurnLeft:
+            left.stop();
             right.forward(speed);
             break;
 
-        case Direction::RotateRight:
+        case Direction::TurnRight:
             left.forward(speed);
-            right.backward(speed);
+            right.stop();
+            break;
+
+        case Direction::RotateLeft:
+            rotate(false, speed);
+            break;
+
+        case Direction::RotateRight:
+            rotate(true, speed);
             break;
 
         default:
-            left.stop();
-            right.stop();
+            movStop();
             battery.getMeanVoltage();
-            Serial.println("TEST: stop");
     }
     current = dir;
     currentSpeed = speed;
 }
 
+void Tank::rotate(bool dirRotation, uint8_t speed){
+    if(dirRotation){
+        left.backward(speed);
+        right.forward(speed);
+    }else{
+        left.forward(speed);
+        right.backward(speed);
+    }
+}
+
 
 void Tank::updateBrake(){
-    Serial.println("TEST: Tank brake function");
     left.updateBrake();
     right.updateBrake();
 }

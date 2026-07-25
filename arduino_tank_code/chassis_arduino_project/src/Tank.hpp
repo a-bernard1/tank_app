@@ -9,10 +9,10 @@ enum class Direction {
     None,
     Forward,
     Backward,
-    RotateLeft,
-    RotateRight,
     TurnLeft,
     TurnRight,
+    RotateLeft,
+    RotateRight,
     TurnLeftBack,
     TurnRightBack
 };
@@ -39,6 +39,8 @@ class Tank{
         void movStop();
 
         void updateBrake();
+
+        void rotate(bool dirRotation, uint8_t speed);
 };
 
 #endif
