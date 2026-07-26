@@ -68,6 +68,14 @@ void Tank::move(Direction dir, uint8_t speed){
             rotate(true, speed);
             break;
 
+        case Direction::TurnLeftBack:
+            left.stop();
+            right.backward(speed);
+
+        case Direction::TurnRightBack:
+            left.backward(speed);
+            right.stop();
+
         default:
             movStop();
             battery.getMeanVoltage();
