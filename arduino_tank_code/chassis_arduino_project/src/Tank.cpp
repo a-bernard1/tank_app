@@ -29,6 +29,8 @@ Direction Tank::command(uint8_t cmd){
         case 4: return Direction::TurnRight;
         case 5: return Direction::RotateLeft;
         case 6: return Direction::RotateRight;
+        case 7: return Direction::TurnLeftBack;
+        case 8: return Direction::TurnRightBack;
         default: return Direction::None;
     }
 }
