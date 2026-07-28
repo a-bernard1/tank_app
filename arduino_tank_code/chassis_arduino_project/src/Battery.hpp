@@ -8,11 +8,13 @@
 class Battery{
     private:
         uint8_t pin;
+        float getVoltage();
+        float underVoltageStartTime =0;
 
     public:
         Battery(uint8_t analog_pin);
-        float getVoltage();
-        void getMeanVoltage();
+        float getAverageVoltage();
+        bool isCritical();
 };
 
 
