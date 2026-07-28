@@ -24,6 +24,7 @@ class Tank{
         Direction current = Direction::None;
         uint8_t speed = 150;
         uint8_t currentSpeed = speed;
+        bool batteryTooLow = false;
 
     public: 
         Tank(Motor& l, Motor& r);
@@ -38,7 +39,7 @@ class Tank{
 
         void movStop();
 
-        void updateBrake();
+        void update();
 
         void rotate(bool dirRotation, uint8_t speed);
 };

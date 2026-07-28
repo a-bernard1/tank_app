@@ -36,6 +36,10 @@ Direction Tank::command(uint8_t cmd){
 }
 
 void Tank::move(Direction dir, uint8_t speed){
+    if(batteryTooLow){
+        movStop();
+        return;
+    }
     if (dir==current && speed==currentSpeed) return;
     
     switch (dir){
@@ -78,7 +82,7 @@ void Tank::move(Direction dir, uint8_t speed){
 
         default:
             movStop();
-            battery.getMeanVoltage();
+            battery.getAverageVoltage();
     }
     current = dir;
     currentSpeed = speed;
@@ -95,7 +99,13 @@ void Tank::rotate(bool dirRotation, uint8_t speed){
 }
 
 
-void Tank::updateBrake(){
+void Tank::update(){
     left.updateBrake();
     right.updateBrake();
+
+    if(battery.isCritical()){
+        Serial.println("TEST: battery too low");
+        movStop();
+        batteryTooLow = true;
+    }
 }
