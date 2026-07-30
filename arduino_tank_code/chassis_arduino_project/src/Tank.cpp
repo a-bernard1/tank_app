@@ -1,9 +1,7 @@
 #include "Tank.hpp"
-#include "Battery.hpp"
 
-Tank::Tank(Motor& l, Motor& r)  : left(l), right(r) {}
+Tank::Tank(Motor& l, Motor& r, Battery& b)  : left(l), right(r), battery(b) {}
 
-Battery battery(A0);
 
 void Tank::begin(){
     left.begin();
@@ -82,7 +80,6 @@ void Tank::move(Direction dir, uint8_t speed){
 
         default:
             movStop();
-            battery.getAverageVoltage();
     }
     current = dir;
     currentSpeed = speed;
@@ -103,8 +100,10 @@ void Tank::update(){
     left.updateBrake();
     right.updateBrake();
 
+    
+    battery.measureVoltage();
+
     if(battery.isCritical()){
-        Serial.println("TEST: battery too low");
         movStop();
         batteryTooLow = true;
     }

@@ -4,6 +4,7 @@
 
 #include <Arduino.h>
 #include "Motor.hpp"
+#include "Battery.hpp"
 
 enum class Direction {
     None,
@@ -21,13 +22,14 @@ class Tank{
     private: 
         Motor& left;
         Motor& right;
+        Battery& battery;
         Direction current = Direction::None;
         uint8_t speed = 150;
         uint8_t currentSpeed = speed;
         bool batteryTooLow = false;
 
     public: 
-        Tank(Motor& l, Motor& r);
+        Tank(Motor& l, Motor& r, Battery& b);
 
         void begin();
 
