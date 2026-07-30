@@ -1,18 +1,27 @@
 #include <Arduino.h>
 #include <ArduinoBLE.h>
 #include "Motor.hpp"
+#include "Battery.hpp"
 #include "Tank.hpp"
 
 
 
 BLEService ledService("19B10000-E8F2-537E-4F6C-D104768A1214"); // Bluetooth® Low Energy LED Service
-
 // Bluetooth® Low Energy LED Switch Characteristic - custom 128-bit UUID, read and writable by central
 BLEByteCharacteristic switchCharacteristic("19B10001-E8F2-537E-4F6C-D104768A1214", BLERead | BLEWrite);
 
+
+BLEService batteryService("180F");
+BLEFloatCharacteristic batteryVoltageChar("19B10001-E8F2-537E-4F6C-D104768A1214", BLERead | BLENotify);
+
+
 Motor leftMotor(10, 9, 4, 5);
 Motor rightMotor(3, 11, 7, 8);
-Tank tank = Tank(leftMotor, rightMotor);
+Battery battery(A0);
+
+Tank tank = Tank(leftMotor, rightMotor, battery);
+
+unsigned long lastBrakeTime=0;
 
 void setup() {
 	Serial.begin(9600);
@@ -23,23 +32,36 @@ void setup() {
     	while (1);
   	}
 
-
 	// set advertised local name and service UUID:
 	BLE.setLocalName("MOUHAHA");
+
 	BLE.setAdvertisedService(ledService);
+	BLE.setAdvertisedService(batteryService);
 
 	// add the characteristic to the service
 	ledService.addCharacteristic(switchCharacteristic);
+	batteryService.addCharacteristic(batteryVoltageChar);
+
 
 	// add service
 	BLE.addService(ledService);
+	BLE.addService(batteryService);
 
 	// set the initial value for the characteristic:
 	switchCharacteristic.writeValue(0);
+	batteryVoltageChar.writeValue(12.6);
 
 	// start advertising
 	BLE.advertise();
 }
+
+void updateBatteryBLE(){
+	if(millis()-lastBrakeTime >=2000){
+		lastBrakeTime = millis();
+		batteryVoltageChar.writeValue(battery.getVoltage());
+	}
+}
+
 
 void loop() {
   	BLEDevice central = BLE.central();
