@@ -20,9 +20,12 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Tank controller',
       theme: ThemeData(colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue), useMaterial3: true),
-      home: const TankStatusBar(
-          child: ControlScreen()
-      ),
+      builder: (context, child) {
+        return TankStatusBar(
+          child: child ?? const SizedBox.shrink(),
+        );
+      },
+      home: const ControlScreen(),
     );
   }
 }
