@@ -14,14 +14,6 @@ void Battery::measureVoltage(){
 
         currentVoltage = (ADC_voltage*(R1+R2)/R2);
 
-
-        //TEST
-        //if(compt<1){
-/*
-            Serial.print("TEST Battery::update: voltage = ");
-            Serial.println(currentVoltage);
-            compt++;   */ 
-        //}
     }
 }
 
