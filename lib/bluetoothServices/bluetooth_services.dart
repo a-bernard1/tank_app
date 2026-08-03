@@ -1,5 +1,7 @@
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'dart:async';
+import 'dart:typed_data';
 
 class BluetoothManager {
   static final BluetoothManager _instance = BluetoothManager._internal();
@@ -7,13 +9,21 @@ class BluetoothManager {
   BluetoothManager._internal();
 
   BluetoothDevice? _device;
-  BluetoothCharacteristic? _characteristic;
+  BluetoothCharacteristic? _commandCharacteristic;
+  BluetoothCharacteristic? _batteryCharacteristic;
 
   bool _isScanning = false;
 
   final String targetDeviceName = "MOUHAHA";
+
   final Guid serviceUuid = Guid("19B10000-E8F2-537E-4F6C-D104768A1214");
   final Guid characteristicUuid = Guid("19B10001-E8F2-537E-4F6C-D104768A1214");
+
+  final Guid batteryServiceUuid = Guid("19B10000-E8F2-537E-4F6C-D104768A1214");
+  final Guid batteryCharacteristicUuid = Guid("19B10002-E8F2-537E-4F6C-D104768A1214");
+
+  final StreamController<double> _batteryStreamController = StreamController<double>.broadcast();
+  Stream<double> get batteryStream => _batteryStreamController.stream;
 
   void start() {
     _startScan();
@@ -92,13 +102,24 @@ class BluetoothManager {
       print("Connected to ${device.platformName}");
 
       List<BluetoothService> services = await device.discoverServices();
+
       for (var service in services) {
         if (service.uuid == serviceUuid) {
           for (var characteristic in service.characteristics) {
             if (characteristic.uuid == characteristicUuid) {
-              _characteristic = characteristic;
+              _commandCharacteristic = characteristic;
               print("Characteristic found and ready !");
-              return;
+            }
+          }
+        }
+
+        if (service.uuid == batteryServiceUuid || service.uuid == serviceUuid){
+          print("TEST connection batterie");
+          for (var characteristic in service.characteristics){
+            if(characteristic.uuid == batteryCharacteristicUuid){
+              _batteryCharacteristic = characteristic;
+              print("Battery characteristic ready");
+              _listenToBattery();
             }
           }
         }
@@ -111,39 +132,60 @@ class BluetoothManager {
   }
 
 
+  void _listenToBattery() async {
+    if(_batteryCharacteristic == null) return;
+
+    try{
+      await _batteryCharacteristic!.setNotifyValue(true);
+
+      _batteryCharacteristic!.onValueReceived.listen((value) {
+        if(value.isNotEmpty){
+          if(value.length >= 4){
+            ByteData byteData = ByteData.sublistView(Uint8List.fromList(value));
+            double voltage = byteData.getFloat32(0, Endian.little);
+            _batteryStreamController.add(voltage);
+          }
+        }
+      });
+    } catch(e){
+      print("Error battery notification");
+    }
+  }
+
+
   void stop() async {
-    await _characteristic?.write([0x00]);
+    await _commandCharacteristic?.write([0x00]);
   }
 
   void forward() async {
-    await _characteristic?.write([0x01]);
+    await _commandCharacteristic?.write([0x01]);
   }
 
   void backward() async {
-    await _characteristic?.write([0x02]);
+    await _commandCharacteristic?.write([0x02]);
   }
 
   void turnLeft() async {
-    await _characteristic?.write([0x03]);
+    await _commandCharacteristic?.write([0x03]);
   }
 
   void turnRight() async {
-    await _characteristic?.write([0x04]);
+    await _commandCharacteristic?.write([0x04]);
   }
 
   void rotateLeft() async {
-    await _characteristic?.write([0x0f]);
+    await _commandCharacteristic?.write([0x05]);
   }
 
   void rotateRight() async {
-    await _characteristic?.write([0x10]);
+    await _commandCharacteristic?.write([0x06]);
   }
 
   void turnLeftBack() async {
-    await _characteristic?.write([0x11]);
+    await _commandCharacteristic?.write([0x07]);
   }
 
   void turnRightBack() async {
-    await _characteristic?.write([0x12]);
+    await _commandCharacteristic?.write([0x08]);
   }
 }
