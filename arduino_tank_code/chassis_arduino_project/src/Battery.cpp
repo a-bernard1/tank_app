@@ -12,15 +12,15 @@ void Battery::measureVoltage(){
     
         float ADC_voltage = correction*(ADC_value*ref_voltage)/1024.0;
 
-        float currentVoltage = (ADC_voltage*(R1+R2)/R2);
+        currentVoltage = (ADC_voltage*(R1+R2)/R2);
 
 
         //TEST
         //if(compt<1){
-
+/*
             Serial.print("TEST Battery::update: voltage = ");
             Serial.println(currentVoltage);
-            compt++;    
+            compt++;   */ 
         //}
     }
 }
@@ -32,13 +32,7 @@ float Battery::getVoltage(){
 
 
 bool Battery::isCritical(){        
-    //TEST
-    if(compt<1){
 
-        Serial.print("TEST Battery::isCritical: voltage = ");
-        Serial.println(currentVoltage);
-        compt++;
-    }
     if(currentVoltage>0  && currentVoltage<10.5){
         if(underVoltageStartTime==0){
             underVoltageStartTime=millis();
