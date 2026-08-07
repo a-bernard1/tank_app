@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tank_app/theme/styles.dart';
 import 'screens/control_screen.dart';
 import 'bluetoothServices/bluetooth_services.dart';
 import 'widgets/tank_status_bar.dart';
@@ -19,7 +20,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Tank controller',
-      theme: ThemeData(colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue), useMaterial3: true),
+      theme: AppTheme.darkTheme,
       builder: (context, child) {
         return TankStatusBar(
           child: child ?? const SizedBox.shrink(),
