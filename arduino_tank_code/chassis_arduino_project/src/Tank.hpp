@@ -35,6 +35,8 @@ class Tank{
 
         void setSpeed(uint8_t s);
 
+        uint8_t getSpeed();
+
         Direction command(uint8_t cmd);
 
         void move(Direction dir, uint8_t speed);
