@@ -13,6 +13,10 @@ void Tank::setSpeed(uint8_t s){
     move(current, speed);
 }
 
+uint8_t Tank::getSpeed(){
+    return currentSpeed;
+}
+
 void Tank::movStop(){
     left.stop();
     right.stop();
@@ -73,10 +77,12 @@ void Tank::move(Direction dir, uint8_t speed){
         case Direction::TurnLeftBack:
             left.stop();
             right.backward(speed);
+            break;
 
         case Direction::TurnRightBack:
             left.backward(speed);
             right.stop();
+            break;
 
         default:
             movStop();
