@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tank_app/screens/control_screen.dart';
 import 'package:tank_app/theme/styles.dart';
-import 'package:sleek_circular_slider/sleek_circular_slider.dart';
 
 class FiringScreen extends StatefulWidget {
   const FiringScreen({super.key});
@@ -17,9 +16,12 @@ class _FiringScreenState extends State<FiringScreen> {
 
   @override
   Widget build(BuildContext context) {
+
+    final buttonTextStyle = Theme.of(context).textTheme.labelLarge;
+
     return Scaffold(
       body: Container(
-        color: backgroundColor,
+        color: AppColors.buttonBackground,
         child: Row(
           children: <Widget>[
             const SizedBox(
@@ -30,7 +32,7 @@ class _FiringScreenState extends State<FiringScreen> {
               children: [
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: buttonBackgroundColor,
+                    backgroundColor: AppColors.buttonBackground,
                   ),
                   child: Text("tank control", style: buttonTextStyle),
                   onPressed: () {
@@ -53,7 +55,7 @@ class _FiringScreenState extends State<FiringScreen> {
                   for(int i=0; i<4; i++)
                     ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: buttonBackgroundColor,
+                        backgroundColor: AppColors.buttonBackground,
                       ),
                       onPressed: (){
                         print(rotaValue[i]);
@@ -66,7 +68,7 @@ class _FiringScreenState extends State<FiringScreen> {
             ),
             ElevatedButton(
               style: ElevatedButton.styleFrom(
-                backgroundColor: buttonBackgroundColor,
+                backgroundColor: AppColors.buttonBackground,
               ),
               onPressed: (null),
               child: Text("FIRE !", style: buttonTextStyle),
