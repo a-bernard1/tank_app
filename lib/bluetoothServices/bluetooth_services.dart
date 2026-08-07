@@ -11,6 +11,7 @@ class BluetoothManager {
   BluetoothDevice? _device;
   BluetoothCharacteristic? _commandCharacteristic;
   BluetoothCharacteristic? _batteryCharacteristic;
+  BluetoothCharacteristic? _speedCharacteristic;
 
   bool _isScanning = false;
 
@@ -21,6 +22,9 @@ class BluetoothManager {
 
   final Guid batteryServiceUuid = Guid("19B10000-E8F2-537E-4F6C-D104768A1214");
   final Guid batteryCharacteristicUuid = Guid("19B10002-E8F2-537E-4F6C-D104768A1214");
+
+  final Guid speedServiceUuid = Guid("19B10000-E8F2-537E-4F6C-D104768A1214");
+  final Guid speedCharacteristicUuid = Guid("19B10003-E8F2-537E-4F6C-D104768A1214");
 
   final StreamController<double> _batteryStreamController = StreamController<double>.broadcast();
   Stream<double> get batteryStream => _batteryStreamController.stream;
@@ -110,16 +114,13 @@ class BluetoothManager {
               _commandCharacteristic = characteristic;
               print("Characteristic found and ready !");
             }
-          }
-        }
-
-        if (service.uuid == batteryServiceUuid || service.uuid == serviceUuid){
-          print("TEST connection batterie");
-          for (var characteristic in service.characteristics){
             if(characteristic.uuid == batteryCharacteristicUuid){
               _batteryCharacteristic = characteristic;
               print("Battery characteristic ready");
               _listenToBattery();
+            }
+            if(characteristic.uuid == speedCharacteristicUuid){
+              _speedCharacteristic = characteristic;
             }
           }
         }
@@ -152,6 +153,13 @@ class BluetoothManager {
     }
   }
 
+  void setSpeed(int speed) async{
+    if(_speedCharacteristic != null){
+      int clampedSpeed = speed.clamp(0, 255);
+      await _speedCharacteristic!.write([clampedSpeed]);
+    }
+  }
+
 
   void stop() async {
     await _commandCharacteristic?.write([0x00]);
@@ -174,11 +182,11 @@ class BluetoothManager {
   }
 
   void rotateLeft() async {
-    await _commandCharacteristic?.write([0x05]);
+    await _commandCharacteristic?.write([0x06]);
   }
 
   void rotateRight() async {
-    await _commandCharacteristic?.write([0x06]);
+    await _commandCharacteristic?.write([0x05]);
   }
 
   void turnLeftBack() async {
