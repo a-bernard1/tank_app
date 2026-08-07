@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:tank_app/bluetoothServices/bluetooth_services.dart';
 import 'package:tank_app/screens/firing_screen.dart';
+import 'package:tank_app/widgets/vertical_speed_slider.dart';
 import 'package:tank_app/theme/styles.dart';
+import 'package:vector_math/vector_math_64.dart';
 
 class ControlScreen extends StatefulWidget {
   const ControlScreen({super.key});
@@ -14,33 +16,16 @@ class _ControlScreenState extends State<ControlScreen> {
 
   @override
   Widget build(BuildContext context) {
+
+    final buttonTextStyle = Theme.of(context).textTheme.labelLarge;
+
     return Scaffold(
       body: Container(
-        color: backgroundColor,
-        // decoration: const BoxDecoration(
-        //   gradient: LinearGradient(
-        //     begin: Alignment.bottomLeft,
-        //     end: Alignment.topRight,
-        //     colors: <Color>[
-        //       Color(0xff214c91),
-        //       Color(0xff154494),
-        //       Color(0xff093c96),
-        //       Color(0xff033297),
-        //       Color(0xff062896),
-        //       Color(0xff111b95),
-        //       Color(0xff1d149b),
-        //       Color(0xff2a16aa),
-        //       Color(0xff3717b9),
-        //       Color(0xff4317c8),
-        //       Color(0xff5117d7),
-        //       Color(0xff5e15e6),
-        //     ],
-        //   ),
-        // ),
+        color: AppColors.buttonBackground,
         child: Row(
           children: <Widget>[
             const SizedBox(
-              width: 10,
+              width: 7,
             ),
             SizedBox(
               child: Column(
@@ -48,27 +33,27 @@ class _ControlScreenState extends State<ControlScreen> {
                 children: [
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: buttonBackgroundColor,
+                      backgroundColor: AppColors.buttonBackground,
                     ),
                     onPressed: BluetoothManager().forward,
                     child: SizedBox(
-                      width: 100,
+                      width: 90,
                       height: 100,
                       child: Center(
                         child: Text(
                           "FORWARD",
-                          style: buttonTextStyle
+                          style: buttonTextStyle,
                         ),
                       ),
                     ),
                   ),
                   ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: buttonBackgroundColor,
+                        backgroundColor: AppColors.buttonBackground,
                       ),
                       onPressed: BluetoothManager().stop,
                       child: SizedBox(
-                        width: 100,
+                        width: 90,
                         height: 100,
                         child: Center(
                           child: Text(
@@ -81,10 +66,10 @@ class _ControlScreenState extends State<ControlScreen> {
                   ElevatedButton(
                     onPressed: BluetoothManager().backward,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: buttonBackgroundColor,
+                      backgroundColor: AppColors.buttonBackground,
                     ),
                     child: SizedBox(
-                      width: 100,
+                      width: 90,
                       height: 100,
                       child: Center(
                         child: Text(
@@ -98,11 +83,11 @@ class _ControlScreenState extends State<ControlScreen> {
               ),
             ),
             SizedBox(
-              width: 140,
+              width: 120,
               height: 60,
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: buttonBackgroundColor,
+                  backgroundColor: AppColors.buttonBackground,
                 ),
                 child: Text(
                   "barrel commands",
@@ -124,20 +109,19 @@ class _ControlScreenState extends State<ControlScreen> {
                     children: [
                       ElevatedButton(
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: buttonBackgroundColor,
+                          backgroundColor: AppColors.buttonBackground,
                         ),
                         onPressed: BluetoothManager().rotateLeft,
                         child: SizedBox(
-                          width: 100,
+                          width: 90,
                           height: 100,
                           child: Center(
                             child: Transform(
                               alignment: Alignment.center,
-                              transform: Matrix4.identity()
-                                ..scale(-1.0, 1.0, 1.0),
+                              transform: Matrix4.identity()..scaleByVector3(Vector3(1.0, -1.0, 100)),
                               child: const Icon(
                                 Icons.refresh_rounded,
-                                color: widgetTextColor,
+                                color: AppColors.widgetText,
                                 size: 50.0,
                               ),
                             ),
@@ -146,16 +130,16 @@ class _ControlScreenState extends State<ControlScreen> {
                       ),
                       ElevatedButton(
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: buttonBackgroundColor,
+                          backgroundColor: AppColors.buttonBackground,
                         ),
                         onPressed: BluetoothManager().rotateRight,
                         child: const SizedBox(
-                          width: 100,
+                          width: 90,
                           height: 100,
                           child: Center(
                             child: Icon(
                               Icons.refresh_rounded,
-                              color: widgetTextColor,
+                              color: AppColors.widgetText,
                               size: 50.0,
                             ),
                           ),
@@ -168,16 +152,16 @@ class _ControlScreenState extends State<ControlScreen> {
                     children: [
                       ElevatedButton(
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: buttonBackgroundColor,
+                          backgroundColor: AppColors.buttonBackground,
                         ),
                         onPressed: BluetoothManager().turnLeft,
                         child: const SizedBox(
-                          width: 110,
+                          width: 90,
                           height: 120,
                           child: Center(
                             child: Icon(
                               Icons.undo,
-                              color: widgetTextColor,
+                              color: AppColors.widgetText,
                               size: 50.0,
                             ),
                           ),
@@ -185,16 +169,16 @@ class _ControlScreenState extends State<ControlScreen> {
                       ),
                       ElevatedButton(
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: buttonBackgroundColor,
+                          backgroundColor: AppColors.buttonBackground,
                         ),
                         onPressed: BluetoothManager().turnRight,
                         child: const SizedBox(
-                          width: 110,
+                          width: 90,
                           height: 120,
                           child: Center(
                             child: Icon(
                               Icons.redo,
-                              color: widgetTextColor,
+                              color: AppColors.widgetText,
                               size: 50.0,
                             ),
                           ),
@@ -207,19 +191,18 @@ class _ControlScreenState extends State<ControlScreen> {
                     children: [
                       ElevatedButton(
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: buttonBackgroundColor,
+                          backgroundColor: AppColors.buttonBackground,
                         ),
                         onPressed: BluetoothManager().turnLeftBack,
                         child: SizedBox(
-                          width: 100,
+                          width:90,
                           height: 110,
                           child: Transform(
                             alignment: Alignment.center,
-                            transform: Matrix4.identity()
-                              ..scale(1.0, -1.0, 1.0),
+                            transform: Matrix4.identity()..scaleByVector3(Vector3(1.0, -1.0, 100)),
                             child: const Icon(
                               Icons.undo,
-                              color: widgetTextColor,
+                              color: AppColors.widgetText,
                               size: 50.0,
                             ),
                           ),
@@ -227,11 +210,11 @@ class _ControlScreenState extends State<ControlScreen> {
                       ),
                       ElevatedButton(
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: buttonBackgroundColor,
+                          backgroundColor: AppColors.buttonBackground,
                         ),
                         onPressed: BluetoothManager().turnRightBack,
                         child: SizedBox(
-                          width: 100,
+                          width: 90,
                           height: 110,
                           child: Transform(
                             alignment: Alignment.center,
@@ -239,7 +222,7 @@ class _ControlScreenState extends State<ControlScreen> {
                               ..scale(1.0, -1.0, 1.0),
                             child: const Icon(
                               Icons.redo,
-                              color: widgetTextColor,
+                              color: AppColors.widgetText,
                               size: 50.0,
                             ),
                           ),
@@ -250,6 +233,7 @@ class _ControlScreenState extends State<ControlScreen> {
                 ],
               ),
             ),
+            VerticalSpeedSlider()
           ],
         ),
       ),
