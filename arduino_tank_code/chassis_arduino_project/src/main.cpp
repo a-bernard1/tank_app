@@ -10,6 +10,7 @@ BLEService tankService("19B10000-E8F2-537E-4F6C-D104768A1214"); // Bluetooth® L
 // Bluetooth® Low Energy LED Switch Characteristic - custom 128-bit UUID, read and writable by central
 BLEByteCharacteristic switchCharacteristic("19B10001-E8F2-537E-4F6C-D104768A1214", BLERead | BLEWrite);
 BLEFloatCharacteristic batteryVoltageChar("19B10002-E8F2-537E-4F6C-D104768A1214", BLERead | BLENotify);
+BLEByteCharacteristic speedCharacteristic("19B10003-E8F2-537E-4F6C-D104768A1214", BLERead | BLEWrite);
 
 
 Motor leftMotor(10, 9, 4, 5);
@@ -37,6 +38,7 @@ void setup() {
 	// add the characteristic to the service
 	tankService.addCharacteristic(switchCharacteristic);
 	tankService.addCharacteristic(batteryVoltageChar);
+	tankService.addCharacteristic(speedCharacteristic);
 
 
 	// add service
@@ -45,6 +47,7 @@ void setup() {
 	// set the initial value for the characteristic:
 	switchCharacteristic.writeValue(0);
 	batteryVoltageChar.writeValue(12.6);
+	speedCharacteristic.writeValue(150);
 
 	// start advertising
 	BLE.advertise();
@@ -73,7 +76,11 @@ void loop() {
 			if(switchCharacteristic.written()){
 				uint8_t cmd_received = switchCharacteristic.value();
 				Direction dir = tank.command(cmd_received); 
-				tank.move(dir, 150);
+				tank.move(dir, tank.getSpeed());
+			}
+			if(speedCharacteristic.written()){
+				uint8_t newSpeed = speedCharacteristic.value();
+				tank.setSpeed(newSpeed);
 			}
 		}
 	}
