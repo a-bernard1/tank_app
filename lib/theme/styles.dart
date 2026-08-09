@@ -29,7 +29,7 @@ class AppTheme{
       textTheme: TextTheme(
         labelLarge: GoogleFonts.orbitron(
           color: AppColors.widgetText,
-          fontSize: 13,
+          fontSize: 11,
           fontWeight: FontWeight.bold,
           fontStyle: FontStyle.italic,
         ),
