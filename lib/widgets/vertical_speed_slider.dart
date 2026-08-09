@@ -26,11 +26,12 @@ class _VerticalSpeedSliderState extends State<VerticalSpeedSlider> {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
+        const SizedBox(height: 5),
         Text(
           "SPEED : ${_currentGear.toInt()}",
           style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.orange),
         ),
-        const SizedBox(height: 10),
+        const SizedBox(height: 5),
         SizedBox(
           height: 290,
           child: RotatedBox(
