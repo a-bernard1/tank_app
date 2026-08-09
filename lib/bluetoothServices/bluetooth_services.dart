@@ -8,12 +8,11 @@ class BluetoothManager {
   factory BluetoothManager() => _instance;
   BluetoothManager._internal();
 
-  BluetoothDevice? _device;
+  BluetoothDevice? targetDevice;
+
   BluetoothCharacteristic? _commandCharacteristic;
   BluetoothCharacteristic? _batteryCharacteristic;
   BluetoothCharacteristic? _speedCharacteristic;
-
-  bool _isScanning = false;
 
   final String targetDeviceName = "MOUHAHA";
 
@@ -29,8 +28,16 @@ class BluetoothManager {
   final StreamController<double> _batteryStreamController = StreamController<double>.broadcast();
   Stream<double> get batteryStream => _batteryStreamController.stream;
 
+  final StreamController<bool> _connectionStateController = StreamController<bool>.broadcast();
+  Stream<bool> get connectionStateStream => _connectionStateController.stream;
+
+  bool _isConnected = false;
+  bool get isConnected => _isConnected;
+
+  Stream<List<ScanResult>> get scanResults => FlutterBluePlus.scanResults;
+
   void start() {
-    _startScan();
+    startScan();
   }
 
   Future<bool> requestBluetoothPermissions() async {
@@ -43,92 +50,72 @@ class BluetoothManager {
     return statuses.values.every((status) => status.isGranted);
   }
 
-  void _startScan() async {
-    if (_isScanning) return;
 
-    print(" ========== trying to ask permissions =============================");
-    var status = await requestBluetoothPermissions();
-    if (!status) {
-      print(" ========== perm not allowed =============================");
-      return;
-    }
+  Future<void> startScan() async {
+    if(await FlutterBluePlus.isSupported == false) return;
 
+    await FlutterBluePlus.startScan(
+      withServices: [serviceUuid],
+      timeout: const Duration(seconds: 4),
+    );
+  }
 
-    var locationStatus = await Permission.locationWhenInUse.serviceStatus;
-    if (locationStatus.isDisabled) {
-      print("Le GPS est désactivé ! Veuillez activer la localisation dans les paramètres d'Android");
-      return;
-    }
+  Future<void> stopScan() async{
+    await FlutterBluePlus.stopScan();
+  }
 
+  Future<void> connectToDevice(BluetoothDevice device) async {
+    await stopScan();
 
-    bool isOn = await FlutterBluePlus.isOn;
-    if (!isOn) {
-      print("Bluetooth is off. Please enable Bluetooth.");
-      return;
-    }
+    try{
+      await device.connect(timeout: const Duration(seconds: 5));
+      targetDevice = device;
+      _isConnected = true;
+      _connectionStateController.add(true);
 
-    _isScanning = true;
-    print("========== Starting Scan ==========");
-
-    try {
-      await FlutterBluePlus.startScan(timeout: const Duration(seconds: 15));
-      FlutterBluePlus.scanResults.listen((results) async {
-        for (ScanResult r in results) {
-          String deviceName = r.advertisementData.advName.isNotEmpty
-              ? r.advertisementData.advName
-              : r.device.platformName;
-          print("result : ${r.device}");
-
-
-          if (deviceName == targetDeviceName && _device == null) {
-            print("Found device: $deviceName. Stopping scan and connecting...");
-            _isScanning = false;
-            await FlutterBluePlus.stopScan();
-            await _connectToDevice(r.device);
-            break;
-          }
+      device.connectionState.listen((state) {
+        if(state == BluetoothConnectionState.disconnected){
+          _isConnected = false;
+          _connectionStateController.add(false);
         }
       });
 
-
-    } catch (e) {
-      print("Erreur scan: $e");
-      _isScanning = false;
+      await _discoverServices(device);
+    } catch(e) {
+      print("ERROR connection : $e");
+      _isConnected = false;
+      _connectionStateController.add(false);
     }
-
-    FlutterBluePlus.startScan(timeout: const Duration(seconds: 15));
   }
 
-  Future<void> _connectToDevice(BluetoothDevice device) async {
-    try {
-      await device.connect(autoConnect: false);
-      _device = device;
-      print("Connected to ${device.platformName}");
 
-      List<BluetoothService> services = await device.discoverServices();
+  Future<void> disconnect() async {
+    if(targetDevice != null){
+      await targetDevice!.disconnect();
+      _isConnected = false;
+      _connectionStateController.add(false);
+    }
+  }
 
-      for (var service in services) {
-        if (service.uuid == serviceUuid) {
-          for (var characteristic in service.characteristics) {
-            if (characteristic.uuid == characteristicUuid) {
-              _commandCharacteristic = characteristic;
-              print("Characteristic found and ready !");
-            }
-            if(characteristic.uuid == batteryCharacteristicUuid){
-              _batteryCharacteristic = characteristic;
-              print("Battery characteristic ready");
-              _listenToBattery();
-            }
-            if(characteristic.uuid == speedCharacteristicUuid){
-              _speedCharacteristic = characteristic;
-            }
+  Future<void> _discoverServices(BluetoothDevice device) async {
+    List<BluetoothService> services = await device.discoverServices();
+    for (var service in services) {
+      if (service.uuid == serviceUuid) {
+        for (var characteristic in service.characteristics) {
+          if (characteristic.uuid == characteristicUuid) {
+            _commandCharacteristic = characteristic;
+            print("Characteristic found and ready !");
+          }
+          if(characteristic.uuid == batteryCharacteristicUuid){
+            _batteryCharacteristic = characteristic;
+            print("Battery characteristic ready");
+            _listenToBattery();
+          }
+          if(characteristic.uuid == speedCharacteristicUuid){
+            _speedCharacteristic = characteristic;
           }
         }
       }
-    } catch (e) {
-      print("Error during connection: $e");
-      _device = null;
-      _isScanning = false;
     }
   }
 
