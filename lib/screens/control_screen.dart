@@ -37,7 +37,7 @@ class _ControlScreenState extends State<ControlScreen> {
                     ),
                     onPressed: BluetoothManager().forward,
                     child: SizedBox(
-                      width: 90,
+                      width: 95,
                       height: 100,
                       child: Center(
                         child: Text(
