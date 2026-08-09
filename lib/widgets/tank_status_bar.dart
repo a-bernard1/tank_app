@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:tank_app/bluetoothServices/bluetooth_services.dart';
-import 'package:tank_app/theme/styles.dart';
+import 'package:tank_app/screens/bluetooth_devices_screen.dart';
+import '../main.dart';
 
 class TankStatusBar extends StatelessWidget {
   final Widget child;
@@ -19,10 +20,22 @@ class TankStatusBar extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
+            IconButton(
+            padding: EdgeInsets.zero,
+            constraints: const BoxConstraints(),
+            icon: const Icon(Icons.bluetooth, color: Colors.blueAccent, size: 22),
+            onPressed: () {
+              navigatorKey.currentState?.push(
+                MaterialPageRoute(
+                  builder: (context) => const BluetoothDevicesScreen(),
+                ),
+              );
+            },
+          ),
               Center(
                   child: StreamBuilder<double>(
                 stream: bluetoothManager.batteryStream,
-                initialData: 0,
+                initialData: -1,
                 builder: (context, snapshot) {
                   double batteryLevel = snapshot.data ?? 0;
                   return Row(
@@ -47,7 +60,22 @@ class TankStatusBar extends StatelessWidget {
                 },
               )),
               const SizedBox(width: 40),
-              const Center(
+              StreamBuilder(
+                  stream: bluetoothManager.connectionStateStream,
+                  initialData: bluetoothManager.isConnected,
+                  builder: (context, snapshot) {
+                    bool connected = snapshot.data ?? false;
+                    return Text(
+                      connected ? "CONNECTED" : "DISCONNECTED",
+                      style: TextStyle(
+                          decoration: TextDecoration.none,
+                          color: connected ? Colors.green : Colors.red,
+                          fontSize: 13,
+                          fontWeight: FontWeight.bold,
+                          fontStyle: FontStyle.italic),
+                    );
+                  })
+              /*Center(
                 child: Text(
                   "CONNECTED",
                   style: TextStyle(
@@ -57,7 +85,7 @@ class TankStatusBar extends StatelessWidget {
                       fontWeight: FontWeight.bold,
                       fontStyle: FontStyle.italic),
                 ),
-              ),
+              ),*/
             ],
           ),
         ),
