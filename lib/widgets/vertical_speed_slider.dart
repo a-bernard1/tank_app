@@ -23,17 +23,20 @@ class _VerticalSpeedSliderState extends State<VerticalSpeedSlider> {
 
   @override
   Widget build(BuildContext context) {
+    final screenSize = MediaQuery.sizeOf(context);
+    final screenHeight = screenSize.height;
+
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        const SizedBox(height: 5),
+        SizedBox(height: screenHeight*0.014),
         Text(
           "SPEED : ${_currentGear.toInt()}",
           style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.orange),
         ),
-        const SizedBox(height: 5),
+        SizedBox(height: screenHeight*0.014),
         SizedBox(
-          height: 290,
+          height: screenHeight*0.8,
           child: RotatedBox(
             quarterTurns: 3,
             child: Slider(

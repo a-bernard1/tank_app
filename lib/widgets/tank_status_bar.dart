@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:tank_app/bluetoothServices/bluetooth_services.dart';
 import 'package:tank_app/screens/bluetooth_devices_screen.dart';
+import '../theme/styles.dart';
 import '../main.dart';
 
 class TankStatusBar extends StatelessWidget {
@@ -12,10 +13,20 @@ class TankStatusBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
+    final screenSize = MediaQuery.sizeOf(context);
+    final screenWidth = screenSize.width;
+    final screenHeight = screenSize.height;
+
+    String textState;
+    bool isConnected = false;
+    IconData batteryIcon;
+    Color batteryIconColor;
+
     return Column(
       children: [
         Container(
-          height: 30,
+          height: screenHeight*0.1,
           color: Colors.black,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -23,7 +34,7 @@ class TankStatusBar extends StatelessWidget {
             IconButton(
             padding: EdgeInsets.zero,
             constraints: const BoxConstraints(),
-            icon: const Icon(Icons.bluetooth, color: Colors.blueAccent, size: 22),
+            icon: Icon(Icons.bluetooth, color: Colors.blueAccent, size: screenWidth*0.034),
             onPressed: () {
               navigatorKey.currentState?.push(
                 MaterialPageRoute(
@@ -38,54 +49,65 @@ class TankStatusBar extends StatelessWidget {
                 initialData: -1,
                 builder: (context, snapshot) {
                   double batteryLevel = snapshot.data ?? 0;
+                  if(isConnected){
+                    if(batteryLevel>10.5){
+                      batteryIcon = Icons.battery_std;
+                      batteryIconColor = AppColors.techGreen;
+                    } else {
+                      batteryIcon = Icons.battery_alert;
+                      batteryIconColor = AppColors.techRed;
+                    }
+                  } else {
+                    batteryIcon = Icons.battery_unknown;
+                    batteryIconColor = AppColors.widgetText;
+                  }
+
                   return Row(
                     children: [
                       Icon(
-                        batteryLevel > 10.5
-                            ? Icons.battery_std
-                            : Icons.battery_alert,
-                        color: batteryLevel > 10.5 ? Colors.green : Colors.red,
+                          batteryIcon,
+                          color: batteryIconColor
                       ),
-                      const SizedBox(width: 4),
+                      SizedBox(width: screenWidth*0.006),
                       Text(
-                        "${batteryLevel.toStringAsFixed(2)} V",
-                        style: const TextStyle(
+                        isConnected && batteryLevel >0
+                            ? "${batteryLevel.toStringAsFixed(2)} V"
+                            : "-- V",
+                        style: TextStyle(
                           decoration: TextDecoration.none,
-                          color: Colors.orange,
-                          fontSize: 15,
+                          color: AppColors.widgetText,
+                          fontSize: screenWidth*0.023,
                         ),
                       ),
                     ],
                   );
                 },
               )),
-              const SizedBox(width: 40),
+              SizedBox(width: screenWidth*0.06),
               StreamBuilder(
                   stream: bluetoothManager.connectionStateStream,
                   initialData: bluetoothManager.isConnected,
                   builder: (context, snapshot) {
                     bool connected = snapshot.data ?? false;
+                    if(connected){
+                      textState = "CONNECTED";
+                      isConnected = true;
+                    } else {
+                      textState = "DISCONNECTED";
+                      isConnected = false;
+                    }
+
                     return Text(
-                      connected ? "CONNECTED" : "DISCONNECTED",
+                      textState,
                       style: TextStyle(
                           decoration: TextDecoration.none,
-                          color: connected ? Colors.green : Colors.red,
-                          fontSize: 13,
+                          color: connected ? AppColors.techGreen : AppColors.techRed,
+                          fontSize: screenWidth*0.023,
                           fontWeight: FontWeight.bold,
                           fontStyle: FontStyle.italic),
                     );
-                  })
-              /*Center(
-                child: Text(
-                  "CONNECTED",
-                  style: TextStyle(
-                      decoration: TextDecoration.none,
-                      color: Colors.orange,
-                      fontSize: 15,
-                      fontWeight: FontWeight.bold,
-                      fontStyle: FontStyle.italic),
-                ),
-              ),*/
+                  },
+              )
             ],
           ),
         ),
