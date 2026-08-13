@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import '../bluetoothServices/bluetooth_services.dart';
+import 'package:google_fonts/google_fonts.dart';
+import '../theme/styles.dart';
 
 class BluetoothDevicesScreen extends StatefulWidget {
   const BluetoothDevicesScreen({super.key});
@@ -27,16 +29,23 @@ class _BluetoothDevicesScreenState extends State<BluetoothDevicesScreen> {
 
   @override
   Widget build(BuildContext context) {
+
+    final buttonTextStyle = Theme.of(context).textTheme.labelLarge;
+    final screenSize = MediaQuery.sizeOf(context);
+    final screenWidth = screenSize.width;
+    final screenHeight = screenSize.height;
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Bluetooth devices"),
+        title:  const Text(
+            "Bluetooth devices"),
         actions: [
           IconButton(
             icon: isScanning
-                ? const SizedBox(
-                    width: 20,
-                    height: 20,
-                    child: CircularProgressIndicator(
+                ? SizedBox(
+                    width: screenWidth*0.03,
+                    height: screenHeight*0.56,
+                    child: const CircularProgressIndicator(
                         color: Colors.white, strokeWidth: 2),
                   )
                 : const Icon(Icons.refresh),
@@ -48,14 +57,14 @@ class _BluetoothDevicesScreenState extends State<BluetoothDevicesScreen> {
         children: [
           if (bleManager.isConnected)
             Container(
-              color: Colors.green.withOpacity(0.2),
+              color: Colors.green.withValues(alpha: 0.2),
               padding: const EdgeInsets.all(12),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text("Connected to : ${bleManager.targetDevice?.platformName ?? 'Tank'}"),
                   ElevatedButton(
-                    style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+                    style: ElevatedButton.styleFrom(backgroundColor: AppColors.techRed),
                     onPressed: () async {
                       await bleManager.disconnect();
                       setState(() {});

@@ -17,6 +17,10 @@ class _ControlScreenState extends State<ControlScreen> {
   @override
   Widget build(BuildContext context) {
 
+    final screenSize = MediaQuery.sizeOf(context);
+    final screenWidth = screenSize.width;
+    final screenHeight = screenSize.height;
+
     final buttonTextStyle = Theme.of(context).textTheme.labelLarge;
 
     return Scaffold(
@@ -24,8 +28,8 @@ class _ControlScreenState extends State<ControlScreen> {
         color: AppColors.buttonBackground,
         child: Row(
           children: <Widget>[
-            const SizedBox(
-              width: 7,
+            SizedBox(
+              width: screenWidth*0.01,
             ),
             SizedBox(
               child: Column(
@@ -37,8 +41,8 @@ class _ControlScreenState extends State<ControlScreen> {
                     ),
                     onPressed: BluetoothManager().forward,
                     child: SizedBox(
-                      width: 95,
-                      height: 100,
+                      width: screenWidth*0.15,
+                      height: screenHeight*0.30,
                       child: Center(
                         child: Text(
                           "FORWARD",
@@ -53,8 +57,8 @@ class _ControlScreenState extends State<ControlScreen> {
                       ),
                       onPressed: BluetoothManager().stop,
                       child: SizedBox(
-                        width: 90,
-                        height: 100,
+                        width: screenWidth*0.14,
+                        height: screenHeight*0.30,
                         child: Center(
                           child: Text(
                             "STOP",
@@ -69,8 +73,8 @@ class _ControlScreenState extends State<ControlScreen> {
                       backgroundColor: AppColors.buttonBackground,
                     ),
                     child: SizedBox(
-                      width: 90,
-                      height: 100,
+                      width: screenWidth*0.14,
+                      height: screenHeight*0.30,
                       child: Center(
                         child: Text(
                           "BACKWARD",
@@ -83,14 +87,14 @@ class _ControlScreenState extends State<ControlScreen> {
               ),
             ),
             SizedBox(
-              width: 120,
-              height: 60,
+              width: screenWidth*0.17,
+              height: screenHeight*0.16,
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.buttonBackground,
                 ),
                 child: Text(
-                  "barrel commands",
+                  "gun control",
                   textAlign: TextAlign.center,
                   style: buttonTextStyle
                 ),
@@ -113,16 +117,16 @@ class _ControlScreenState extends State<ControlScreen> {
                         ),
                         onPressed: BluetoothManager().rotateLeft,
                         child: SizedBox(
-                          width: 90,
-                          height: 100,
+                          width: screenWidth*0.14,
+                          height: screenHeight*0.30,
                           child: Center(
                             child: Transform(
                               alignment: Alignment.center,
-                              transform: Matrix4.identity()..scaleByVector3(Vector3(1.0, -1.0, 100)),
-                              child: const Icon(
+                              transform: Matrix4.identity()..scaleByVector3(Vector3(-1.0, 1.0, 1.0)),
+                              child: Icon(
                                 Icons.refresh_rounded,
                                 color: AppColors.widgetText,
-                                size: 50.0,
+                                size: screenWidth*0.08,
                               ),
                             ),
                           ),
@@ -133,14 +137,14 @@ class _ControlScreenState extends State<ControlScreen> {
                           backgroundColor: AppColors.buttonBackground,
                         ),
                         onPressed: BluetoothManager().rotateRight,
-                        child: const SizedBox(
-                          width: 90,
-                          height: 100,
+                        child: SizedBox(
+                          width: screenWidth*0.14,
+                          height: screenHeight*0.30,
                           child: Center(
                             child: Icon(
                               Icons.refresh_rounded,
                               color: AppColors.widgetText,
-                              size: 50.0,
+                              size: screenWidth*0.08,
                             ),
                           ),
                         ),
@@ -155,14 +159,14 @@ class _ControlScreenState extends State<ControlScreen> {
                           backgroundColor: AppColors.buttonBackground,
                         ),
                         onPressed: BluetoothManager().turnLeft,
-                        child: const SizedBox(
-                          width: 90,
-                          height: 120,
+                        child: SizedBox(
+                          width: screenWidth*0.14,
+                          height: screenHeight*0.30,
                           child: Center(
                             child: Icon(
                               Icons.undo,
                               color: AppColors.widgetText,
-                              size: 50.0,
+                              size: screenWidth*0.08,
                             ),
                           ),
                         ),
@@ -172,14 +176,14 @@ class _ControlScreenState extends State<ControlScreen> {
                           backgroundColor: AppColors.buttonBackground,
                         ),
                         onPressed: BluetoothManager().turnRight,
-                        child: const SizedBox(
-                          width: 90,
-                          height: 120,
+                        child:  SizedBox(
+                          width: screenWidth*0.14,
+                          height: screenHeight*0.3,
                           child: Center(
                             child: Icon(
                               Icons.redo,
                               color: AppColors.widgetText,
-                              size: 50.0,
+                              size: screenWidth*0.08,
                             ),
                           ),
                         ),
@@ -195,15 +199,15 @@ class _ControlScreenState extends State<ControlScreen> {
                         ),
                         onPressed: BluetoothManager().turnLeftBack,
                         child: SizedBox(
-                          width:90,
-                          height: 110,
+                          width:screenWidth*0.14,
+                          height: screenHeight*0.30,
                           child: Transform(
                             alignment: Alignment.center,
-                            transform: Matrix4.identity()..scaleByVector3(Vector3(1.0, -1.0, 100)),
-                            child: const Icon(
+                            transform: Matrix4.identity()..scaleByVector3(Vector3(1.0, -1.0, 1.0)),
+                            child: Icon(
                               Icons.undo,
                               color: AppColors.widgetText,
-                              size: 50.0,
+                              size: screenWidth*0.08,
                             ),
                           ),
                         ),
@@ -214,16 +218,15 @@ class _ControlScreenState extends State<ControlScreen> {
                         ),
                         onPressed: BluetoothManager().turnRightBack,
                         child: SizedBox(
-                          width: 90,
-                          height: 110,
+                          width: screenWidth*0.14,
+                          height: screenHeight*0.30,
                           child: Transform(
                             alignment: Alignment.center,
-                            transform: Matrix4.identity()
-                              ..scale(1.0, -1.0, 1.0),
-                            child: const Icon(
+                            transform: Matrix4.identity()..scaleByVector3(Vector3(1.0, -1.0, 1.0)),
+                            child: Icon(
                               Icons.redo,
                               color: AppColors.widgetText,
-                              size: 50.0,
+                              size:screenWidth*0.08,
                             ),
                           ),
                         ),
