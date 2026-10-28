@@ -3,14 +3,12 @@
 #include <SoftwareSerial.h>
 
 Transmission transmission(12, 13);
-//SoftwareSerial MonPortSerie(12, 13);
 
 void setup() {
 	Serial.begin(9600);
 	Serial.println("READY");
     Serial.println("Je suis l'UNO 3 : mainUNO2.cpp : qui reçoie");
 	transmission.begin(152000); 
-	//MonPortSerie.begin(152000); 
 
 }
 
@@ -38,9 +36,9 @@ void loop() {
                 break;
             }
 
-        uint16_t a = order[1];
-        uint16_t b = order[2];
-        uint16_t step = 0;
+        int16_t a = order[1];
+        int16_t b = order[2];
+        int16_t step = 0;
 
         a = a<<8;
 
@@ -48,24 +46,5 @@ void loop() {
 
         Serial.print("pas :");
         Serial.println(step);
-        /*Serial.print("Pas : ");
-        Serial.print(order[1]);
-
-        Serial.print(order[2]);
-        Serial.println();
-*/
     }
-
-    
-    /*MonPortSerie.listen();
-    while(MonPortSerie.available()>0){
-        byte valeur;
-        valeur = MonPortSerie.read();
-        if(valeur!=-1){
-            Serial.print("valeur reçu : ");
-            Serial.println(valeur);
-            Serial.println();
-        }
-    }*/
-   delay(1000);
 }
