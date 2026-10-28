@@ -18,10 +18,34 @@ void loop() {
 
     if(c=='\r' || c=='\n')return;
 
-    if(c=='a'){
-        Serial.print("VALUE: ");
-        Serial.println(c);
-        transmission.sendOrder(1, 500);
+
+    switch (c){
+        case 'a':
+            Serial.print("VALUE: ");
+            Serial.println(c);
+            transmission.sendOrder(1, 50);
+            break;
+        
+        case 'z':
+            Serial.print("VALUE: ");
+            Serial.println(c);
+            transmission.sendOrder(2, 50);
+            break;
+        
+        case 'q':
+            Serial.print("VALUE: ");
+            Serial.println(c);
+            transmission.sendOrder(3, 100);
+            break;
+        
+        case 's':
+            Serial.print("VALUE: ");
+            Serial.println(c);
+            transmission.sendOrder(4, 100);
+            break;
+        
+        default:
+            break;
+        }
     }
-  }
 }
