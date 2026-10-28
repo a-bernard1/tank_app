@@ -18,7 +18,7 @@ class Transmission{
 
         void begin(long speed);
 
-        void sendOrder(byte command, uint16_t step);
+        void sendOrder(byte command, int16_t step);
         void readOrder(byte order[]);
 };
 
