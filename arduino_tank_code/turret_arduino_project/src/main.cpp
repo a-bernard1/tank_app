@@ -9,7 +9,7 @@ Transmission transmission(12, 13);
 
 void setup() {
     Serial.begin(9600);
-    transmission.begin(152000); 
+    transmission.begin(57600); 
 
     stepper1.setMaxSpeed(500.0);
     stepper1.setAcceleration(300.0);
@@ -26,13 +26,9 @@ void loop() {
 
     if(order[0]!=0){
 
-        int16_t a = order[1];
-        int16_t b = order[2];
         int16_t step = 0;
 
-        a = a<<8;
-
-        step = (long)(a | b);
+        step = (int16_t)(order[1]<<8) | order[2];
 
         switch (order[0])
             {
@@ -68,6 +64,17 @@ void loop() {
 
     }
 
-    stepper1.run();
+    if(stepper1.distanceToGo()!=0){
+        stepper1.run();
+    } else {
+        stepper1.disableOutputs();
+    }
+
+    if(stepper2.distanceToGo()!=0){
+        stepper2.run();
+    } else {
+        stepper2.disableOutputs();
+    }
     stepper2.run();
+
 }
