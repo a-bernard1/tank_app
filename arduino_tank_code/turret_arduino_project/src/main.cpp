@@ -1,15 +1,17 @@
 #include <Arduino.h>
 #include <AccelStepper.h>
-#include "Transmission.hpp"
+#include <Transmission.hpp>
+#include <SoftwareSerial.h>
 
 AccelStepper stepper1(4,8,10,9,11);
 AccelStepper stepper2(4,3,5,4,7);
-Transmission transmission(12, 13);
+SoftwareSerial serial(12, 13);
+Transmission transmission(serial);
 
 
 void setup() {
     Serial.begin(9600);
-    transmission.begin(57600); 
+    serial.begin(57600); 
 
     stepper1.setMaxSpeed(500.0);
     stepper1.setAcceleration(300.0);
