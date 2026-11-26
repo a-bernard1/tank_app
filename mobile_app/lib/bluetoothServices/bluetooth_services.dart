@@ -13,6 +13,7 @@ class BluetoothManager {
   BluetoothCharacteristic? _commandCharacteristic;
   BluetoothCharacteristic? _batteryCharacteristic;
   BluetoothCharacteristic? _speedCharacteristic;
+  BluetoothCharacteristic? _turretCommandCharacteristic;
 
   final String targetDeviceName = "MOUHAHA";
 
@@ -24,6 +25,9 @@ class BluetoothManager {
 
   final Guid speedServiceUuid = Guid("19B10000-E8F2-537E-4F6C-D104768A1214");
   final Guid speedCharacteristicUuid = Guid("19B10003-E8F2-537E-4F6C-D104768A1214");
+
+  final Guid turretCommandUuid = Guid("19B10000-E8F2-537E-4F6C-D104768A1214");
+  final Guid turretCommandCharacteristicUuid = Guid("19B10004-E8F2-537E-4F6C-D104768A1214");
 
   final StreamController<double> _batteryStreamController = StreamController<double>.broadcast();
   Stream<double> get batteryStream => _batteryStreamController.stream;
@@ -182,5 +186,17 @@ class BluetoothManager {
 
   void turnRightBack() async {
     await _commandCharacteristic?.write([0x08]);
+  }
+
+  Future<void> sendOrder(int command, int step) async{
+    if(_turretCommandCharacteristic == null) return;
+
+    List<int> frame = [
+      0xAA,
+      command,
+      (step >> 8 ) & 0xFF,
+      step & 0xFF
+    ];
+    await _turretCommandCharacteristic!.write(frame);
   }
 }
