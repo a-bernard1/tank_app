@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:tank_app/screens/control_screen.dart';
 import 'package:tank_app/theme/styles.dart';
+import 'package:tank_app/bluetoothServices/bluetooth_services.dart';
 
 class FiringScreen extends StatefulWidget {
   const FiringScreen({super.key});
@@ -10,13 +11,11 @@ class FiringScreen extends StatefulWidget {
 }
 
 class _FiringScreenState extends State<FiringScreen> {
-
   final int elevation = 0;
   final List<String> rotaValue = ["-0.6", "-6", "+6", "+0.6"];
 
   @override
   Widget build(BuildContext context) {
-
     final buttonTextStyle = Theme.of(context).textTheme.labelLarge;
 
     return Scaffold(
@@ -38,9 +37,7 @@ class _FiringScreenState extends State<FiringScreen> {
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(
-                          builder: (_) => const ControlScreen()
-                      ),
+                      MaterialPageRoute(builder: (_) => const ControlScreen()),
                     );
                   },
                 ),
@@ -49,22 +46,19 @@ class _FiringScreenState extends State<FiringScreen> {
             const SizedBox(
               width: 20,
             ),
-
             Row(
                 children: [
-                  for(int i=0; i<4; i++)
+                  for (int i = 0; i < 4; i++)
                     ElevatedButton(
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppColors.buttonBackground,
                       ),
-                      onPressed: (){
-                        print(rotaValue[i]);
+                      onPressed: () {
+                        BluetoothManager().sendOrder(2, 100);
                       },
                       child: Text(rotaValue[i], style: buttonTextStyle),
                     ),
-
-
-                ]
+            ]
             ),
             ElevatedButton(
               style: ElevatedButton.styleFrom(
